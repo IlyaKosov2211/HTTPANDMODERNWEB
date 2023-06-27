@@ -16,8 +16,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class Server {
-    private final List<String> validPaths = List.of("/index.html", "/spring.svg", "/spring.png", "/resources.html", "/styles.css", "/app.js", "/links.html", "/forms.html", "/classic.html", "/events.html", "/events.js");
     private final int SERVER_SOCKET;
+    private final List<String> validPaths = List.of("/index.html", "/spring.svg", "/spring.png",
+            "/resources.html", "/styles.css", "/app.js", "/links.html", "/forms.html", "/classic.html",
+            "/events.html", "/events.js");
+
     private final ExecutorService executorService;
     private final ConcurrentHashMap<String, Map<String, Handler>> handlers;
 
@@ -41,7 +44,7 @@ public class Server {
         }
     }
 
-    private void proceedConnection(Socket socket) {
+    private void proceedConnection(Socket socket){
         try (final var in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
              final var out = new BufferedOutputStream(socket.getOutputStream())) {
             // read only request line for simplicity //строка запроса только для чтения, для простоты
@@ -59,7 +62,7 @@ public class Server {
             final String path = parts[1];
             Request request = new Request(method, path);
 
-            if (request == null || !handlers.containsKey(request.getMethod())) {
+            if (request == null || !handlers.containsKey(request.getMethod())){
                 responseWithoutContent(out, "404", "Not found");
             }
 
@@ -133,4 +136,3 @@ public class Server {
         handlers.get(method).put(path, handler);
     }
 }
-
