@@ -16,8 +16,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class Server {
-    private final List<String> validPaths = List.of("/index.html", "/spring.svg", "/spring.png", "/resources.html", "/styles.css", "/app.js", "/links.html", "/forms.html", "/classic.html", "/events.html", "/events.js");
     private final int SERVER_SOCKET;
+    private final List<String> validPaths = List.of("/index.html", "/spring.svg", "/spring.png",
+            "/resources.html", "/styles.css", "/app.js", "/links.html", "/forms.html", "/classic.html",
+            "/events.html", "/events.js");
+
     private final ExecutorService executorService;
     private final ConcurrentHashMap<String, Map<String, Handler>> handlers;
 
@@ -44,8 +47,6 @@ public class Server {
     private void proceedConnection(Socket socket) {
         try (final var in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
              final var out = new BufferedOutputStream(socket.getOutputStream())) {
-            // read only request line for simplicity //строка запроса только для чтения, для простоты
-            // must be in form GET /path HTTP/1.1 //должен быть в формате GET /путь HTTP/1.1
             final var requestLine = in.readLine();
             final var parts = requestLine.split(" ");
 
@@ -84,7 +85,6 @@ public class Server {
         final var filePath = Path.of(".", "public", path);
         final var mimeType = Files.probeContentType(filePath);
 
-        // special case for classic
         if (path.equals("/classic.html")) {
             final var template = Files.readString(filePath);
             final var content = template.replace(
@@ -133,4 +133,3 @@ public class Server {
         handlers.get(method).put(path, handler);
     }
 }
-
